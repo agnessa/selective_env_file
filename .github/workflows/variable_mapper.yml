@@ -6,9 +6,9 @@ jobs:
     steps:
     - name: secrets
       run: |
-        printf "${{ toJSON(secrets) }}" > tmp.txt
+        echo '${{ toJSON(secrets) }}' > tmp.txt
         jq -c tmp.txt 'keys'
     - name: vars
       run: |
-        echo "${{ toJSON(vars) }}"
+        echo '${{ toJSON(vars) }}' > tmp.txt
   
