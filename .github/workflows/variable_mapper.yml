@@ -1,5 +1,5 @@
 on: [push]
-name: Export variables to output and environment and log
+name: Build .env file from secrets and vars
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -29,6 +29,3 @@ jobs:
       run: |
         echo '${{ toJSON(vars) }}' > tmp.txt
         cat tmp.txt | jq 'keys' | jq 'map(select(. | test("^${{ steps.extract_branch.outputs.branch}}_CLIENT")))'
-
-    - name: Concatenate filtered client secrets and env vars into an .env file
-    
