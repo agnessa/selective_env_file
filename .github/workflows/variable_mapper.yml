@@ -7,8 +7,8 @@ jobs:
     - name: secrets
       run: |
         echo '${{ toJSON(secrets) }}' > tmp.txt
-        jq -c tmp.txt 'keys'
+        cat tmp.txt | jq 'keys'
     - name: vars
       run: |
         echo '${{ toJSON(vars) }}' > tmp.txt
-  
+        cat tmp.txt | jq 'keys'
