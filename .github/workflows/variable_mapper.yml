@@ -6,7 +6,7 @@ jobs:
     steps:
     - name: secrets
       run: |
-        echo ${{ toJSON(secrets) }}
+        echo ${{ toJSON(secrets) }} | jq 'keys'
     - name: vars
       run: |
         echo ${{ toJSON(vars) }}
