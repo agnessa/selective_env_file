@@ -18,10 +18,9 @@ jobs:
         ENVIRONMENT: ${{ steps.extract_branch.outputs.branch == 'main' && 'PRODUCTION' || 'STAGING' }}
       run: echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
 
-    - name: Filter client secrets & vars and save .env file (names starting with [PRODUCTION|STAGING]_CLIENT)
+    - name: Filter client secrets & vars and save .env file (names starting with [PRODUCTION|STAGING]_CLIENT or CLIENT_)
       run: |
         echo '${{ toJSON(secrets) }}' > tmp.txt
+        echo '${{ toJSON(vars) }}' >> tmp.txt
         cat tmp.txt | jq -r 'to_entries | map(select(.key | test("^(${{ steps.extract_environment.outputs.environment }}_CLIENT_|CLIENT_)"))) | map(.key + "=" + .value) | .[]' > .env
-        echo '${{ toJSON(vars) }}' > tmp.txt
-        cat tmp.txt | jq -r 'to_entries | map(select(.key | test("^(${{ steps.extract_environment.outputs.environment }}_CLIENT_|CLIENT_)"))) | map(.key + "=" + .value) | .[]' >> .env
         cat .env
