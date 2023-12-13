@@ -4,11 +4,31 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: secrets
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Extract branch name
+      id: extract_branch
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
+    - name: Extract environment name
+      id: extract_environment
+      env:
+        ENVIRONMENT: ${{ steps.extract_branch.outputs.branch == 'main' && 'PRODUCTION' || 'STAGING' }}
+      run: echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+    - name: Filter client secrets for .env file (names starting with [PRODUCTION|STAGING]_CLIENT)
+      id: client_secrets
       run: |
         echo '${{ toJSON(secrets) }}' > tmp.txt
-        cat tmp.txt | jq 'keys'
-    - name: vars
+        cat tmp.txt | jq 'keys' | jq 'map(select(. | test("^${{ steps.extract_branch.outputs.branch}}_CLIENT")))'
+
+    - name: Filter client env vars for .env file (names starting with [PRODUCTION|STAGING]_CLIENT)
+      id: client_vars
       run: |
         echo '${{ toJSON(vars) }}' > tmp.txt
-        cat tmp.txt | jq 'keys'
+        cat tmp.txt | jq 'keys' | jq 'map(select(. | test("^${{ steps.extract_branch.outputs.branch}}_CLIENT")))'
+
+    - name: Concatenate filtered client secrets and env vars into an .env file
+    
