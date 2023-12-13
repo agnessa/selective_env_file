@@ -1,6 +1,15 @@
 on: [push]
 name: Export variables to output and environment and log
 jobs:
+  view:
+    runs-on: ubuntu-latest
+    steps:
+    - name: secrets
+      run: |
+        echo ${{ secrets }}
+    - name: vars
+      run: |
+        echo ${{ vars }}
   build:
     runs-on: ubuntu-latest
     steps:
