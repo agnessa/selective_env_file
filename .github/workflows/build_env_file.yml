@@ -21,5 +21,5 @@ jobs:
     # Filter client secrets & vars and save .env file (names starting with [PRODUCTION|STAGING]_CLIENT or CLIENT_)
     - name: Save .env file
       run: |
-        echo "${{ toJSON(secrets || '') }}" "${{ toJSON(vars || '') }}" | jq -r 'to_entries | map(select(.key | test("^(${{ steps.extract_environment.outputs.environment }}_CLIENT_|CLIENT_)"))) | map(.key + "=" + .value) | .[]' | sed -r 's/^(${{ steps.extract_environment.outputs.environment }}_CLIENT_|CLIENT_)//' > .env
+        echo '''${{ toJSON(secrets || '') }}''' '''${{ toJSON(vars || '') }}''' | jq -r 'to_entries | map(select(.key | test("^(${{ steps.extract_environment.outputs.environment }}_CLIENT_|CLIENT_)"))) | map(.key + "=" + .value) | .[]' | sed -r 's/^(${{ steps.extract_environment.outputs.environment }}_CLIENT_|CLIENT_)//' > .env
         cat .env
